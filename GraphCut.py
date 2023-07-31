@@ -59,7 +59,7 @@ class GrabCutSegmentation:
                 self.leftButtonUp = True
 
     '''
-    Calculates Euclidean distance in colour space used in formula 11 to estimate the 
+    Calculates Euclidean distance in colour space used in equation 11 to estimate the 
     foreground and background regions of an image based on color similarity and smoothness 
     constraints of alpha
 
@@ -188,7 +188,7 @@ class GrabCutSegmentation:
         # Update weights with GMM likelihoods for probable background and foreground regions
         weights = Vweights
 
-        # Formula 8 and 9
+        # Equation 8 and 9
         # Calculates the negative log-likelihood for the probable FG/BG region of the data term
         weights = np.hstack((weights, -bgd_gmm.score_samples(img.reshape(-1, 3)[prob_idx])))
         weights = np.hstack((weights, -fgd_gmm.score_samples(img.reshape(-1, 3)[prob_idx])))
@@ -209,7 +209,7 @@ class GrabCutSegmentation:
     '''
 
     def calculateEnergy(self, mask, weights):
-        # Function to calculate the energy in formula 7
+        # Function to calculate the energy in equation 7
         weights = np.array(weights)  # Convert the weights list to a NumPy array
         energy = np.sum(np.where(mask == 2, weights[1], 0)) + np.sum(np.where(mask == 3, weights[2], 0))
         return energy
@@ -356,12 +356,12 @@ class BorderMatting:
 
     def run(self):
         print("\nFinding contour...")  # show progress
-        self.find_contour()  # find contour
+        self.findContour()  # find contour
         print("\nstart grouping pixels...")  # show progress
-        self.pixel_group()  # group pixels and map them to contour pixels
+        self.pixelGroup()  # group pixels and map them to contour pixels
         print("\nstart minimizing energy...")  # show progress
-        self.energy_function()  # minimizing energy function: find delta and sigma pairs
-        alpha_map = self.construct_alpha_map()  # use best delta and sigma pairs to construct alpha map
+        self.energyFunction()  # minimizing energy function: find delta and sigma pairs
+        alpha_map = self.constructAlphaMap()  # use best delta and sigma pairs to construct alpha map
         print("\ncompleted")
 
         # output_pixel = (alpha_map * foreground_pixel) + ((1 - alpha_map) * background_pixel(0, 0, 0))
@@ -377,7 +377,7 @@ class BorderMatting:
 
     ''' Main Utility Functions '''
 
-    def find_contour(self):
+    def findContour(self):
         # TODO: To write edge finder by myself
         self.trimap = np.uint8(self.trimap)
         # Erode the edges
@@ -400,7 +400,7 @@ class BorderMatting:
 
     '''Find the near contour pixels for each pixel in the trimap'''
 
-    def pixel_group(self):
+    def pixelGroup(self):
         for point in self.C:
             self.D[point] = []
 
@@ -422,9 +422,9 @@ class BorderMatting:
         #     print(keys, self.D[keys])
         return
 
-    ''' equation (12) in the paper '''
+    ''' Equation 12 in the paper '''
 
-    def energy_function(self):
+    def energyFunction(self):
 
         # TODO: check time complexity
         # Previous delta and sigma
@@ -439,16 +439,16 @@ class BorderMatting:
                 for sigma in range(1, self.sigma_level):
                     delta = delta / self.delta_level * self.w
                     sigma = sigma / self.sigma_level * self.w
-                    V = self.smoothing_regularizer(delta, _delta, sigma, _sigma)
+                    V = self.smoothingRegularizer(delta, _delta, sigma, _sigma)
                     D = 0
-                    pixel_group = self.D[point]
-                    for pixel in pixel_group:
+                    pixelGroup = self.D[point]
+                    for pixel in pixelGroup:
                         distance = ((pixel[0] - point[0]) ** 2 + (pixel[1] - point[1]) ** 2) ** 0.5
                         if self.trimap[pixel[0]][pixel[1]] == 0:
                             distance = -distance
-                        alpha = self.distance_to_alpha(distance, sigma, delta)
+                        alpha = self.alphaDistance(distance, sigma, delta)
                         # print(alpha)
-                        tmp = self.data_term(alpha, point)
+                        tmp = self.dataTerm(alpha, point)
                         D += tmp
                         # print(tmp)
                     if energy > V + D:
@@ -477,7 +477,7 @@ class BorderMatting:
     values between 0 and 1 indicate partial transparency.
     '''
 
-    def construct_alpha_map(self):
+    def constructAlphaMap(self):
         # Alpha map initialization
         m, n = self.trimap.shape
         alpha_map = [[0 for j in range(n)] for i in range(m)]
@@ -492,55 +492,55 @@ class BorderMatting:
         # Construct the alpha map
         for point in self.C:
             delta, sigma = self.delta_sigma_dict[point]
-            pixel_group = self.D[point]
-            for pixel in pixel_group:
+            pixelGroup = self.D[point]
+            for pixel in pixelGroup:
                 distance = ((pixel[0] - point[0]) ** 2 + (pixel[1] - point[1]) ** 2) ** 0.5
                 if self.trimap[pixel[0]][pixel[1]] == 0:
                     distance = -distance
-                alpha = self.distance_to_alpha(distance, sigma, delta)
+                alpha = self.alphaDistance(distance, sigma, delta)
                 # print(alpha)
                 alpha_map[pixel[0]][pixel[1]] = alpha
             distance = 0
-            alpha = self.distance_to_alpha(distance, sigma, delta)
+            alpha = self.alphaDistance(distance, sigma, delta)
             alpha_map[point[0]][point[1]] = alpha
         # print(alpha_map)
         return alpha_map
 
-    ''' equation (13) in the paper '''
+    ''' equation 13 in the paper '''
 
-    def smoothing_regularizer(self, delta, _delta, sigma, _sigma):
+    def smoothingRegularizer(self, delta, _delta, sigma, _sigma):
 
         # print(delta, _delta, sigma, _sigma)
         return self.lambda1 * (delta - _delta) ** 2 + self.lambda2 * (sigma - _sigma) ** 2
 
-    ''' equation (14) in the paper '''
+    ''' Equation 14 in the paper '''
 
-    def data_term(self, alpha, pos):
+    def dataTerm(self, alpha, pos):
 
-        out = self.gaussian(alpha, self.alpha_mean(alpha, pos), self.alpha_variance(alpha, pos)) / math.log(2)
+        out = self.gaussian(alpha, self.alphaMean(alpha, pos), self.alphaVariance(alpha, pos)) / math.log(2)
         if out <= 0:
             return 0
         else:
             return -1 * math.log(out)
 
-    ''' equation (15) in the paper '''
+    ''' Equation 15 in the paper '''
 
-    def alpha_mean(self, alpha, pos):
+    def alphaMean(self, alpha, pos):
 
-        out = (1 - alpha) * self.sample_mean(pos, 0) + alpha * self.sample_mean(pos, 1)
+        out = (1 - alpha) * self.sampleMean(pos, 0) + alpha * self.sampleMean(pos, 1)
         # print("alpha mean: ", out)
         return out
 
-    ''' equation (15) in the paper '''
+    ''' Equation 15 in the paper '''
 
-    def alpha_variance(self, alpha, pos):
+    def alphaVariance(self, alpha, pos):
 
-        out = (1 - alpha) ** 2 * self.sample_variance(pos, 0) + alpha ** 2 * self.sample_variance(pos, 1)
+        out = (1 - alpha) ** 2 * self.sampleVariance(pos, 0) + alpha ** 2 * self.sampleVariance(pos, 1)
         return out
 
     ''' Sample mean and covariance in L*L sample space '''
 
-    def sample_mean(self, pos, alpha):
+    def sampleMean(self, pos, alpha):
         area = self.img[pos[0] - self.L: pos[0] + self.L + 1, pos[1] - self.L: pos[1] + self.L + 1]
         trimap = self.trimap[pos[0] - self.L: pos[0] + self.L + 1, pos[1] - self.L: pos[1] + self.L + 1]
         if alpha == 0:  # background
@@ -550,21 +550,21 @@ class BorderMatting:
         # print("sample mean: ", mean)
         return mean
 
-    def sample_variance(self, pos, alpha):
+    def sampleVariance(self, pos, alpha):
         area = self.img[pos[0] - self.L: pos[0] + self.L + 1, pos[1] - self.L: pos[1] + self.L + 1]
         trimap = self.trimap[pos[0] - self.L: pos[0] + self.L + 1, pos[1] - self.L: pos[1] + self.L + 1]
         if alpha == 0:  # background
-            variance = np.sum((area[trimap == 0] - self.sample_mean(pos, alpha)) ** 2) / self.L ** 2
+            variance = np.sum((area[trimap == 0] - self.sampleMean(pos, alpha)) ** 2) / self.L ** 2
         else:  # foreground
-            variance = np.sum((area[trimap == 4] - self.sample_mean(pos, alpha)) ** 2) / self.L ** 2
+            variance = np.sum((area[trimap == 4] - self.sampleMean(pos, alpha)) ** 2) / self.L ** 2
         # print("sample variance: ", variance)
         return variance
-
-    def distance_to_alpha(self, distance, sigma, delta):
+    '''Distance to alpha'''
+    def alphaDistance(self, distance, sigma, delta):
         if distance < 0:
             return 0
         return 1 / (1 + np.exp(-1 * (distance - delta) / sigma))
-
+    '''gaussian distribution formula'''
     def gaussian(self, x, mean, variance):
         epsilon = 1e-8  # A small positive value to avoid division by zero
         variance += epsilon  # Add epsilon to the variance to avoid zero or very small covariance

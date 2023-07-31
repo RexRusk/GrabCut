@@ -272,6 +272,7 @@ class GrabCutSegmentation:
         mask2 = np.where((mask == 1) + (mask == 3), 255, 0).astype('uint8')  # The mask of the foreground
 
         print("done")
+        print("Press any keyboard key to continue the border matting")
 
         # Plot the energy convergence
         plt.plot(range(num_iters), energy_list)
@@ -559,12 +560,16 @@ class BorderMatting:
             variance = np.sum((area[trimap == 4] - self.sampleMean(pos, alpha)) ** 2) / self.L ** 2
         # print("sample variance: ", variance)
         return variance
+
     '''Distance to alpha'''
+
     def alphaDistance(self, distance, sigma, delta):
         if distance < 0:
             return 0
         return 1 / (1 + np.exp(-1 * (distance - delta) / sigma))
+
     '''gaussian distribution formula'''
+
     def gaussian(self, x, mean, variance):
         epsilon = 1e-8  # A small positive value to avoid division by zero
         variance += epsilon  # Add epsilon to the variance to avoid zero or very small covariance
@@ -575,12 +580,11 @@ class BorderMatting:
 
 if __name__ == "__main__":
     # Replace with the path to your image
-    image_path = ".\images\llama.jpg"
+    image_path = ".\images\elefant.jpg"
 
     # New GrabCut test case
     newSegmentationTestCase = GrabCutSegmentation(image_path)
     newSegmentationTestCase.run(3)  # Default iteration is 3
-    print("Press any keyboard key to continue the border matting")
 
     # New crop
     newCrop = TrimapGenerator(newSegmentationTestCase.img_final, newSegmentationTestCase.mask_final,

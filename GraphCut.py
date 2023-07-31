@@ -242,7 +242,7 @@ class GrabCutSegmentation:
         energy_list = []  # Store energy values for each iteration
 
         for num in range(num_iters):
-            print("iteration number " + str(num))
+            print("iteration number " + str(num) + "...")
 
             # 1. Assign GMM components to pixels: for each n in TU
             back_idx = np.where(np.logical_or(mask == 0, mask == 2))
@@ -356,11 +356,11 @@ class BorderMatting:
         self.delta_sigma_dict = dict()  # dictionary for delta and sigma: format (xt, yt): (delta, sigma)
 
     def run(self):
-        print("\nFinding contour...")  # show progress
+        print("\nfinding contour...")  # show progress
         self.findContour()  # find contour
-        print("\nstart grouping pixels...")  # show progress
+        print("\nfind contour distance...")  # show progress
         self.pixelGroup()  # group pixels and map them to contour pixels
-        print("\nstart minimizing energy...")  # show progress
+        print("\nminimizing energy function...")  # show progress
         self.energyFunction()  # minimizing energy function: find delta and sigma pairs
         alpha_map = self.constructAlphaMap()  # use best delta and sigma pairs to construct alpha map
         print("\ncompleted")

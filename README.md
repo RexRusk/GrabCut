@@ -25,3 +25,20 @@ The Border Matting algorithm in the Python script aims to improve the quality of
 3. Minimizing Energy Function: The algorithm minimizes the energy function using dynamic programming to find the best delta and sigma pairs for smoothing regularizer traversal at each pixel on the contour.
 
 4. Alpha Map Construction: The algorithm constructs the alpha map using a [0, 1] partition for pixels inside the contour. It multiplies this alpha map with the foreground image to obtain the final Border Matting result.
+
+After segmentation and border matting:
+
+<img src="./Outputs/GrabCut.png" width="214" height="290" >   <img src="./Outputs/bordermatting.png" width="214" height="290" >
+
+**To Run**
+
+1. Install the required Python packages from the Python Package Index (preferably in a virtual environment).
+
+2. Run 'GrabCut.py'
+
+**References**
+
+[1] Rother, Carsten, Vladimir Kolmogorov, and Andrew Blake. "GrabCut: Interactive foreground extraction using iterated graph cuts." ACM transactions on graphics (TOG) 23.3 (2004): 309-314.
+
+[2] Boykov, Yuri Y., and M-P. Jolly. "Interactive graph cuts for optimal boundary & region segmentation of objects in ND images." Proceedings eighth IEEE international conference on computer vision. ICCV 2001. Vol. 1. IEEE, 2001.
+

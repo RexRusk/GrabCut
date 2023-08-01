@@ -46,7 +46,7 @@ Run 'GrabCut.py'
 
 First, it pops up an image, you can use your mouse to drag the rectangle as the bounding box
 
-After GrabCut iterations, it retruns the foreground image, or you can re-drag the rectangle again
+After GrabCut iterations, it returns the foreground image, or you can re-drag the rectangle again
 
 If you are not satisfied with the border of that result, press any key in your keyboard, after some steps, it returns the border matted image
 

@@ -30,11 +30,18 @@ After segmentation and border matting:
 
 <img src="./Outputs/GrabCut.png" width="214" height="290" >   <img src="./Outputs/bordermatting.png" width="214" height="290" >
 
+## Project Installation
+To install the Grabcut project, complete the following steps:
+
+Clone this repository:
+ ```
+git clone with https://github.com/RexRusk/GrabCut.git`
+
+Install the necessary requirements from requirements.txt
+
 **To Run**
 
-1. Install the required Python packages from the Python Package Index (preferably in a virtual environment).
-
-2. Run 'GrabCut.py'
+Run 'GrabCut.py'
 
 **References**
 

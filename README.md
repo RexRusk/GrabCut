@@ -35,7 +35,8 @@ To install the Grabcut project, complete the following steps:
 
 Clone this repository:
  ```
-git clone with https://github.com/RexRusk/GrabCut.git`
+git clone with https://github.com/RexRusk/GrabCut.git
+ ```
 
 Install the necessary requirements from requirements.txt
 

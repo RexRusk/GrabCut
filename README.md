@@ -44,6 +44,12 @@ Install the necessary requirements from requirements.txt
 
 Run 'GrabCut.py'
 
+First, it pops up an image, you can use your mouse to drag the rectangle as the bounding box
+
+After GrabCut iterations, it retruns the foreground image, or you can re-drag the rectangle again
+
+If you are not satisfied with the border of that result, press any key in your keyboard, after some steps, it returns the border matted image
+
 **References**
 
 [1] Rother, Carsten, Vladimir Kolmogorov, and Andrew Blake. "GrabCut: Interactive foreground extraction using iterated graph cuts." ACM transactions on graphics (TOG) 23.3 (2004): 309-314.
